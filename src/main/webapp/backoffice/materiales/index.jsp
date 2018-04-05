@@ -1,3 +1,4 @@
+<%@page import="com.ipartek.formacion.nidea.controller.backoffice.BackofficeMaterialesController"%>
 <%@include file="/templates/head.jsp" %>
 <%@include file="/templates/navbar.jsp" %>
 <%@include file="/templates/alert.jsp" %>
@@ -9,8 +10,9 @@
 
 
 
-<form action="backoffice/materiales" method="get">
-	<div class="input-group col-md-4">
+<form class="form-inline" action="backoffice/materiales" method="get">
+	<div class="input-group">
+	<input type="hidden" name="op" value="<%=BackofficeMaterialesController.OP_BUSQUEDA%>">
 	      <input class="form-control py-2" type="search" name="search" 
 		         placeholder="nombre del material">
 	      <span class="input-group-append">
@@ -23,10 +25,13 @@
 	<div class="form-inline col-md-4">
 		<input type="submit" value="Buscar">
 	</div>
-
-	<hr>
-
+	<a href="backoffice/materiales?id=-1&op=<%=BackofficeMaterialesController.OP_MOSTRAR_FORMULARIO%>&nombre=${material.nombre}" class="btn btn-primary">Añadir material</a>
 </form>
+	
+
+
+<br>
+<hr>
 
 
 
@@ -50,7 +55,7 @@
 		<c:forEach  items="${materiales}" var="material">
 			<tr>
 				<td>${material.id}</td>
-				<td>${material.nombre}</td>
+				<td><a href="backoffice/materiales?id=${material.id}&op=<%=BackofficeMaterialesController.OP_MOSTRAR_FORMULARIO%>&nombre=${material.nombre}">${material.nombre}</a></td>
 				<td<c:if test = "${material.precio > 6 && material.precio < 25}"> style="color:blue" </c:if> <c:if test = "${material.precio > 24}"> style="color:red" </c:if>>${material.precio}</td>
 			</tr>
 		</c:forEach>

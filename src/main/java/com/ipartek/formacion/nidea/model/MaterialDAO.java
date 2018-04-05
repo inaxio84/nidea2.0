@@ -1,7 +1,6 @@
 package com.ipartek.formacion.nidea.model;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -13,7 +12,7 @@ public class MaterialDAO {
 
 	private static MaterialDAO INSTANCE = null;
 
-	// Private constructor para que NO se pueda hacer new() y crear N instancias
+	// Private constructor NO se pueda hacer new y crear N instancias
 	private MaterialDAO() {
 	}
 
@@ -45,9 +44,13 @@ public class MaterialDAO {
 
 		try {
 
-			Class.forName("com.mysql.jdbc.Driver");
-			final String URL = "jdbc:mysql://192.168.0.42/spoty?user=alumno&password=alumno";
-			con = DriverManager.getConnection(URL);
+			/*
+			 * Class.forName("com.mysql.jdbc.Driver"); final String URL =
+			 * "jdbc:mysql://192.168.0.42/spoty?user=alumno&password=alumno"; con =
+			 * DriverManager.getConnection(URL);
+			 */
+
+			con = ConnectionManager.getConnection();
 			String sql = "SELECT id, nombre, precio FROM material;";
 
 			pst = con.prepareStatement(sql);
