@@ -34,6 +34,8 @@ public class BackofficeMaterialesController extends HttpServlet {
 	private Alert alert;
 	private MaterialDAO dao;
 
+	private Material material;
+
 	// parametros comunes
 	private String search; // para el buscador por nombre matertial
 	private int op; // operacion a realizar
@@ -98,6 +100,8 @@ public class BackofficeMaterialesController extends HttpServlet {
 	private void doProcess(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
+		alert = null;
+
 		try {
 
 			recogerParametros(request);
@@ -132,7 +136,25 @@ public class BackofficeMaterialesController extends HttpServlet {
 	}
 
 	private void guardar(HttpServletRequest request) {
-		// TODO Auto-generated method stub
+
+		if (id == -1) {
+
+			;
+
+			if (dao.save(material)) {
+				alert = new Alert("Material Añadido id " + id, Alert.TIPO_PRIMARY);
+			} else {
+				alert = new Alert("Error Añadiendo, sentimos las molestias ", Alert.TIPO_WARNING);
+			}
+			listar(request);
+
+			// alert = new Alert("Creado nuevo material", Alert.TIPO_PRIMARY);
+		} else {
+			alert = new Alert("Modificado material id:" + id, Alert.TIPO_PRIMARY);
+
+		}
+		request.setAttribute("material", material);
+		dispatcher = request.getRequestDispatcher(VIEW_FORM);
 
 	}
 
@@ -146,8 +168,12 @@ public class BackofficeMaterialesController extends HttpServlet {
 	}
 
 	private void eliminar(HttpServletRequest request) {
-		// TODO Auto-generated method stub
-
+		if (dao.delete(id)) {
+			alert = new Alert("Material Eliminado id " + id, Alert.TIPO_PRIMARY);
+		} else {
+			alert = new Alert("Error Eliminando, sentimos las molestias ", Alert.TIPO_WARNING);
+		}
+		listar(request);
 	}
 
 	private void mostrarFormulario(HttpServletRequest request) {
@@ -156,7 +182,7 @@ public class BackofficeMaterialesController extends HttpServlet {
 		if (id > -1) {
 			// TODO recuperar de la BBDD que es un material que existe
 			alert = new Alert("Mostramos Detalle id:" + id + " nombre: " + nombre, Alert.TIPO_WARNING);
-
+			material.setId(id);
 		} else {
 			alert = new Alert("Nuevo Producto", Alert.TIPO_WARNING);
 		}
@@ -182,12 +208,16 @@ public class BackofficeMaterialesController extends HttpServlet {
 
 		if (request.getParameter("op") != null) {
 			op = Integer.parseInt(request.getParameter("op"));
+		} else {
+			op = 0;
 		}
 
 		search = (request.getParameter("search") != null) ? request.getParameter("search") : "";
 
 		if (request.getParameter("id") != null) {
 			id = Integer.parseInt(request.getParameter("id"));
+		} else {
+			id = -1;
 		}
 
 		if (request.getParameter("nombre") != null) {
@@ -197,6 +227,8 @@ public class BackofficeMaterialesController extends HttpServlet {
 		if (request.getParameter("precio") != null) {
 			precio = Float.parseFloat(request.getParameter("precio"));
 		}
+
+		material = new Material();
 
 	}
 
