@@ -4,26 +4,77 @@
 <%@include file="/templates/navbar.jsp" %>
 <%@include file="/templates/alert.jsp" %>
 
-
-
-
-<label for="id">Id:</label>
-<input type="text" value="${material.id}" name="id">
-<label for="nombre">Material:</label>
-<input type="text" value="${material.nombre}" name="nombre">
-<label for=precio>Precio:</label>
-<input type="text" value="${material.precio}" name="precio">
-
-<c:if test="${material.id>-1}">
-	<a href="backoffice/materiales?id=${material.id}&op=<%=BackofficeMaterialesController.OP_GUARDAR%>" class="btn btn-primary">Modificar Material</a>
-	<a href="backoffice/materiales?id=${material.id}&op=<%=BackofficeMaterialesController.OP_ELIMINAR%>" class="btn btn-danger">Eliminar Material</a>
-</c:if>
-
-<c:if test="${material.id==-1}">
-	<a href="backoffice/materiales?id=${material.id}&op=<%=BackofficeMaterialesController.OP_GUARDAR%>" class="btn btn-success">Añadir Material</a>
-</c:if>
-<br>
-
-<a href="backoffice/materiales?op=-1" class="btn btn-primary">Volver</a>
+<div class="container">
+	<div class="form-group row">
+		<a class="btn btn-outline-dark btn-lg" href="backoffice/materiales">Volver</a>
+	</div>
+	<form action="backoffice/materiales" method="post">
+	  <div class="form-group row">
+	    <label for="id" class="col-sm-2 col-form-label">ID:</label>
+	    <div class="col-sm-2">
+	      <input type="text" class="form-control" name="id" readonly value="${material.id}">
+	    </div>
+	  </div>
+	  <div class="form-group row">
+	    <label for="nombre" class="col-sm-2 col-form-label">Material</label>
+	    <div class="col-sm-5">
+	      <input type="text" value="${material.nombre}" class="form-control" name="nombre" placeholder="Introduce el nombre del material" >
+	    </div>
+	  </div>
+	  <div class="input-group ">
+	    <label for="precio" class="col-sm-2 col-form-label">Precio</label>
+	    <div class="input-group-append">
+	      <input type="text" class="form-control" value="${material.precio}" name="precio" placeholder="Introduce el precio">
+	      <span class="input-group-text">&euro;</span>
+	    </div>
+	   
+	  </div>
+	</div>
+	<br>  
+	
+		<c:if test="${material.id == -1}">
+		   <div class="form-group row">
+			   <div class="col-sm-12">
+			   	  <input type="hidden" name="op" value="<%=BackofficeMaterialesController.OP_GUARDAR%>"> 	
+			      <button type="submit" class="btn btn-primary btn-lg btn-block">Crear</button>
+			  </div>
+		  </div>
+		</c:if>
+		  
+		<c:if test="${material.id > -1}">  
+			  <div class="form-group row">
+			    <div class="col-sm-6">
+			      <input type="hidden" name="op" value="<%=BackofficeMaterialesController.OP_GUARDAR%>"> 	
+			      <button type="submit" class="btn btn-success btn-lg btn-block">Modificar</button>
+			    </div>
+			    <div class="col-sm-6">			      
+			      <a href="#exampleModal" 
+			       class="btn btn-danger btn-lg btn-block" data-toggle="modal" data-target="#exampleModal">Eliminar</a>
+			    </div>
+			  </div>
+		</c:if>
+		
+		<!-- Modal -->
+		<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		  <div class="modal-dialog" role="document">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <h5 class="modal-title" id="exampleModalLabel">Confirmación de eliminacion</h5>
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		          <span aria-hidden="true">&times;</span>
+		        </button>
+		      </div>
+		      <div class="modal-body">
+		        ¿Estas seguro de que quieres eliminar el material ${material.nombre}?
+		      </div>
+		      <div class="modal-footer">
+		        <a href="backoffice/materiales" type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</a>
+		        <a href="backoffice/materiales?id=${material.id}&op=<%=BackofficeMaterialesController.OP_ELIMINAR%>" type="button" class="btn btn-primary">Eliminar</a>
+		      </div>
+		    </div>
+		  </div>
+		</div> 
+	</form>
+</div>
 
 <jsp:include page="/templates/footer.jsp"></jsp:include>

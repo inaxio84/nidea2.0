@@ -34,8 +34,6 @@ public class BackofficeMaterialesController extends HttpServlet {
 	private Alert alert;
 	private MaterialDAO dao;
 
-	private Material material;
-
 	// parametros comunes
 	private String search; // para el buscador por nombre matertial
 	private int op; // operacion a realizar
@@ -124,7 +122,22 @@ public class BackofficeMaterialesController extends HttpServlet {
 				break;
 			}
 
-		} catch (Exception e) {
+		}
+
+		catch (NumberFormatException e) {
+			Material material = new Material();
+			material.setId(id);
+			material.setNombre(nombre.trim());
+			material.setPrecio(precio);
+
+			alert = new Alert();
+			e.printStackTrace();
+			alert = new Alert("El formato de precio debe ser decimales separados por punto", Alert.TIPO_WARNING);
+			request.setAttribute("material", material);
+			dispatcher = request.getRequestDispatcher(VIEW_FORM);
+		}
+
+		catch (Exception e) {
 			alert = new Alert();
 			e.printStackTrace();
 			dispatcher = request.getRequestDispatcher(VIEW_INDEX);
@@ -137,21 +150,45 @@ public class BackofficeMaterialesController extends HttpServlet {
 
 	private void guardar(HttpServletRequest request) {
 
-		if (id == -1) {
+		Material material = new Material();
+		material.setId(id);
+		material.setNombre(nombre.trim());
+		material.setPrecio(precio);
 
-			;
-
-			if (dao.save(material)) {
-				alert = new Alert("Material Añadido id " + id, Alert.TIPO_PRIMARY);
-			} else {
-				alert = new Alert("Error Añadiendo, sentimos las molestias ", Alert.TIPO_WARNING);
-			}
-			listar(request);
-
-			// alert = new Alert("Creado nuevo material", Alert.TIPO_PRIMARY);
+		if (nombre.length() > 45) {
+			alert = new Alert("El nombre no puede superar 45 caracteres.", Alert.TIPO_WARNING);
 		} else {
-			alert = new Alert("Modificado material id:" + id, Alert.TIPO_PRIMARY);
 
+			if (!nombre.equals("") && precio > 0) {
+				if (dao.save(material)) {
+					alert = new Alert("Material guardado", Alert.TIPO_PRIMARY);
+				} else {
+					alert = new Alert("Lo sentimos, no hemos podido guardar el material ", Alert.TIPO_WARNING);
+				}
+
+				request.setAttribute("material", material);
+				dispatcher = request.getRequestDispatcher(VIEW_FORM);
+			} else {
+				if (nombre.equals("")) {
+					if (precio <= 0) {
+						alert = new Alert("Debes introducir el nombre del material y el precio debe ser mayor de 0",
+								Alert.TIPO_WARNING);
+					} else {
+						alert = new Alert("Debes introducir el nombre del material", Alert.TIPO_WARNING);
+					}
+				} else {
+
+					if (precio <= 0) {
+						alert = new Alert("El precio debe ser mayor de 0", Alert.TIPO_WARNING);
+					} else {
+						alert = new Alert("El precio debe ser un numero (decimal separado por punto).",
+								Alert.TIPO_WARNING);
+					}
+				}
+
+				request.setAttribute("material", material);
+				dispatcher = request.getRequestDispatcher(VIEW_FORM);
+			}
 		}
 		request.setAttribute("material", material);
 		dispatcher = request.getRequestDispatcher(VIEW_FORM);
@@ -161,28 +198,29 @@ public class BackofficeMaterialesController extends HttpServlet {
 	private void buscar(HttpServletRequest request) {
 		alert = new Alert("Busqueda para: " + search, Alert.TIPO_PRIMARY);
 		ArrayList<Material> materiales = new ArrayList<Material>();
-		materiales = dao.getAll();
+		materiales = dao.filtrar(search);
 		request.setAttribute("materiales", materiales);
 		dispatcher = request.getRequestDispatcher(VIEW_INDEX);
 
 	}
 
 	private void eliminar(HttpServletRequest request) {
+
 		if (dao.delete(id)) {
 			alert = new Alert("Material Eliminado id " + id, Alert.TIPO_PRIMARY);
 		} else {
 			alert = new Alert("Error Eliminando, sentimos las molestias ", Alert.TIPO_WARNING);
 		}
 		listar(request);
+
 	}
 
 	private void mostrarFormulario(HttpServletRequest request) {
 
 		Material material = new Material();
 		if (id > -1) {
-			// TODO recuperar de la BBDD que es un material que existe
-			alert = new Alert("Mostramos Detalle id:" + id + " nombre: " + nombre, Alert.TIPO_WARNING);
-			material.setId(id);
+			material = dao.getById(id);
+
 		} else {
 			alert = new Alert("Nuevo Producto", Alert.TIPO_WARNING);
 		}
@@ -222,13 +260,17 @@ public class BackofficeMaterialesController extends HttpServlet {
 
 		if (request.getParameter("nombre") != null) {
 			nombre = request.getParameter("nombre");
+		} else {
+			nombre = "";
 		}
 
 		if (request.getParameter("precio") != null) {
-			precio = Float.parseFloat(request.getParameter("precio"));
-		}
 
-		material = new Material();
+			precio = Float.parseFloat(request.getParameter("precio"));
+
+		} else {
+			precio = 0;
+		}
 
 	}
 
