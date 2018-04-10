@@ -30,8 +30,9 @@ public interface Persistible<P> {
 	 * 
 	 * @param pojo
 	 * @return
+	 * @throws Exception
 	 */
-	public boolean save(P pojo);
+	public boolean save(P pojo) throws Exception;
 
 	/**
 	 * Eliminamos un registro por su identificador

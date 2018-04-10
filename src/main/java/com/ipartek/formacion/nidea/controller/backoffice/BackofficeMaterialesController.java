@@ -124,19 +124,6 @@ public class BackofficeMaterialesController extends HttpServlet {
 
 		}
 
-		catch (NumberFormatException e) {
-			Material material = new Material();
-			material.setId(id);
-			material.setNombre(nombre.trim());
-			material.setPrecio(precio);
-
-			alert = new Alert();
-			e.printStackTrace();
-			alert = new Alert("El formato de precio debe ser decimales separados por punto", Alert.TIPO_WARNING);
-			request.setAttribute("material", material);
-			dispatcher = request.getRequestDispatcher(VIEW_FORM);
-		}
-
 		catch (Exception e) {
 			alert = new Alert();
 			e.printStackTrace();
@@ -155,43 +142,63 @@ public class BackofficeMaterialesController extends HttpServlet {
 		material.setNombre(nombre.trim());
 		material.setPrecio(precio);
 
-		if (nombre.length() > 45) {
-			alert = new Alert("El nombre no puede superar 45 caracteres.", Alert.TIPO_WARNING);
-		} else {
+		try {
 
-			if (!nombre.equals("") && precio > 0) {
-				if (dao.save(material)) {
-					alert = new Alert("Material guardado", Alert.TIPO_PRIMARY);
-				} else {
-					alert = new Alert("Lo sentimos, no hemos podido guardar el material ", Alert.TIPO_WARNING);
-				}
+			if (request.getParameter("precio") != null) {
 
-				request.setAttribute("material", material);
-				dispatcher = request.getRequestDispatcher(VIEW_FORM);
+				precio = Float.parseFloat(request.getParameter("precio"));
+
 			} else {
-				if (nombre.equals("")) {
-					if (precio <= 0) {
-						alert = new Alert("Debes introducir el nombre del material y el precio debe ser mayor de 0",
-								Alert.TIPO_WARNING);
-					} else {
-						alert = new Alert("Debes introducir el nombre del material", Alert.TIPO_WARNING);
-					}
-				} else {
-
-					if (precio <= 0) {
-						alert = new Alert("El precio debe ser mayor de 0", Alert.TIPO_WARNING);
-					} else {
-						alert = new Alert("El precio debe ser un numero (decimal separado por punto).",
-								Alert.TIPO_WARNING);
-					}
-				}
-
-				request.setAttribute("material", material);
-				dispatcher = request.getRequestDispatcher(VIEW_FORM);
+				precio = 0;
 			}
+
+			if (nombre.length() > 45) {
+				alert = new Alert("El nombre no puede superar 45 caracteres.", Alert.TIPO_WARNING);
+			} else {
+
+				if (!nombre.equals("") && precio > 0) {
+					try {
+						if (dao.save(material)) {
+							alert = new Alert("Material guardado", Alert.TIPO_PRIMARY);
+						} else {
+							alert = new Alert("Lo sentimos, no hemos podido guardar el material ", Alert.TIPO_WARNING);
+						}
+					} catch (Exception e) {
+						alert = new Alert("Material duplicado", Alert.TIPO_WARNING);
+						e.printStackTrace();
+					}
+
+				} else {
+					if (nombre.equals("")) {
+						if (precio <= 0) {
+							alert = new Alert("Debes introducir el nombre del material y el precio debe ser mayor de 0",
+									Alert.TIPO_WARNING);
+						} else {
+							alert = new Alert("Debes introducir el nombre del material", Alert.TIPO_WARNING);
+						}
+					} else {
+
+						if (precio <= 0) {
+							alert = new Alert("El precio debe ser mayor de 0", Alert.TIPO_WARNING);
+						} else {
+							alert = new Alert("El precio debe ser un numero (decimal separado por punto).",
+									Alert.TIPO_WARNING);
+						}
+					}
+
+				}
+			}
+
+		} catch (NumberFormatException e) {
+			e.printStackTrace();
+			alert = new Alert("El formato de precio debe ser decimales separados por punto", Alert.TIPO_WARNING);
+
 		}
-		request.setAttribute("material", material);
-		dispatcher = request.getRequestDispatcher(VIEW_FORM);
+
+		finally {
+			request.setAttribute("material", material);
+			dispatcher = request.getRequestDispatcher(VIEW_FORM);
+		}
 
 	}
 
@@ -262,14 +269,6 @@ public class BackofficeMaterialesController extends HttpServlet {
 			nombre = request.getParameter("nombre");
 		} else {
 			nombre = "";
-		}
-
-		if (request.getParameter("precio") != null) {
-
-			precio = Float.parseFloat(request.getParameter("precio"));
-
-		} else {
-			precio = 0;
 		}
 
 	}

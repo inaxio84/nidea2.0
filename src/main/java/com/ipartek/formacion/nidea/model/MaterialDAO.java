@@ -41,7 +41,7 @@ public class MaterialDAO implements Persistible<Material> {
 	public ArrayList<Material> getAll() {
 		String sql = "";
 		ArrayList<Material> lista = new ArrayList<Material>();
-		sql = "SELECT id, nombre, precio FROM material;";
+		sql = "SELECT id, nombre, precio FROM material ORDER BY `id` ASC LIMIT 500;";
 
 		try (Connection con = ConnectionManager.getConnection();
 				PreparedStatement pst = con.prepareStatement(sql);
@@ -81,19 +81,22 @@ public class MaterialDAO implements Persistible<Material> {
 	public ArrayList<Material> filtrar(String search) {
 		String sql = "";
 		ArrayList<Material> lista = new ArrayList<Material>();
-		if (search == "") {
-			sql = "SELECT id, nombre, precio FROM material;";
+		if ("".equals(search)) {
+			sql = "SELECT id, nombre, precio FROM material ORDER BY `id` DESC LIMIT 500;";
 		} else {
-			sql = "SELECT id, nombre, precio FROM material WHERE `nombre` LIKE '%" + search + "%';";
+			sql = "SELECT id, nombre, precio FROM material WHERE `nombre` LIKE ? ORDER BY `id` DESC LIMIT 500;";
 		}
-		try (Connection con = ConnectionManager.getConnection();
-				PreparedStatement pst = con.prepareStatement(sql);
-				ResultSet rs = pst.executeQuery();) {
+		try (Connection con = ConnectionManager.getConnection(); PreparedStatement pst = con.prepareStatement(sql);) {
 
-			Material m = null;
-			while (rs.next()) {
-				m = mapper(rs);
-				lista.add(m);
+			if (!"".equals(search)) {
+				pst.setString(1, "%" + search + "%");
+			}
+			try (ResultSet rs = pst.executeQuery();) {
+				Material m = null;
+				while (rs.next()) {
+					m = mapper(rs);
+					lista.add(m);
+				}
 			}
 
 		} catch (Exception e) {
@@ -120,11 +123,19 @@ public class MaterialDAO implements Persistible<Material> {
 	}
 
 	@Override
-	public boolean save(Material pojo) {
+	public boolean save(Material pojo) throws Exception {
 		boolean resul = false;
 		if (pojo != null) {
 			if (pojo.getId() == -1) {
-				resul = crear(pojo);
+				try {
+					resul = crear(pojo);
+
+				} catch (Exception e) {
+
+					e.printStackTrace();
+					throw new Exception("MySQLIntegrityConstraintViolationException");
+
+				}
 			} else {
 				resul = modificar(pojo);
 			}
@@ -155,7 +166,7 @@ public class MaterialDAO implements Persistible<Material> {
 		return resul;
 	}
 
-	private boolean crear(Material pojo) {
+	private boolean crear(Material pojo) throws Exception {
 		boolean resul = false;
 		String sql = "INSERT INTO `nidea`.`material` (`nombre`, `precio`) VALUES (?, ?);";
 
@@ -181,6 +192,7 @@ public class MaterialDAO implements Persistible<Material> {
 			e.printStackTrace();
 			System.out.println("duplicado");
 			System.out.println(e);
+			throw new Exception("MySQLIntegrityConstraintViolationException");
 		}
 		return resul;
 	}
