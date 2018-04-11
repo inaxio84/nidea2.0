@@ -11,6 +11,8 @@ public class EjercicioVehiculos {
 		 * 
 		 */
 
+		Vehiculo.dimeMatricula();
+
 		System.out.println("---------------------------------------");
 
 		VehiculoElectrico tesla = new VehiculoElectrico();

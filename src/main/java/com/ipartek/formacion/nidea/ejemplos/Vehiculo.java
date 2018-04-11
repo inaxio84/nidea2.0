@@ -38,4 +38,9 @@ public abstract class Vehiculo {
 		System.out.println("Luces encendidas");
 	}
 
+	protected static void dimeMatricula() {
+		System.out.println("metodo tonto para probar protected");
+
+	}
+
 }
