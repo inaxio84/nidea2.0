@@ -6,8 +6,7 @@ public class Perro implements Ordenable {
 
 	@Override
 	public int getValor() {
-		int valor = this.getNumeroVacunas();
-		return (valor);
+		return (this.numeroVacunas);
 	}
 
 	public Perro() {
