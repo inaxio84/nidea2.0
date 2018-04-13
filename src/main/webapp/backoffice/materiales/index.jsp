@@ -36,7 +36,7 @@
 
 
 
-<table id="materiales" class="display" cellspacing="0" width="100%">
+<table  class="display datatable" cellspacing="0" width="100%">
 		<thead>
 			<tr>
 				<th>Id</th>

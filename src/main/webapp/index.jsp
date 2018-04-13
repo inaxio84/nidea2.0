@@ -3,10 +3,17 @@
 <%@include file="/templates/alert.jsp" %>
 
 <%
+
 	// Scriplet < %  ...   % >
 	// varias sentencias 
 	String nombre = "pepe";
+	//Date date = new Date();
+    //System.out.println(new Timestamp(date.getTime()));
 	String hora = "10:78";
+	
+	//sentencia para que nos genere un nullPointerException y nos lleve a la pagina de error.jsp
+	String nulo=null;
+	nulo.length();
 
 %>
 
