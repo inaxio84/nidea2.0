@@ -9,7 +9,7 @@
         <a class="p-2 text-dark" href="generar-mesa">Mesa</a>        
         <a class="p-2 text-dark" href="calculadora"> Calculadora</a>
         <a class="p-2 text-dark" href="materiales"> Materiales</a>
-        <a class="p-2 text-dark" href="loginUser"> Login usuarios</a>
+        <a class="btn btn-outline-primary" href="loginUser"> Login usuarios</a>
       </nav>
       
 

@@ -1,6 +1,7 @@
 package com.ipartek.formacion.nidea.controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -9,7 +10,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.ipartek.formacion.nidea.model.UsuarioDAO;
 import com.ipartek.formacion.nidea.pojo.Alert;
+import com.ipartek.formacion.nidea.pojo.Usuario;
 
 /**
  * Servlet implementation class LoginController
@@ -21,9 +24,10 @@ public class LoginController extends HttpServlet {
 
 	private String view = "";
 	private Alert alert = new Alert();
+	private UsuarioDAO dao;
 
-	private static final String USER = "admin";
-	private static final String PASS = "admin";
+	// private static final String USER = "admin";
+	// private static final String PASS = "admin";
 	private static final int SESSION_EXPIRATION = -1; // NO EXPIRA
 	// private static final int SESSION_EXPIRATION = 60 * 20; // 20 min
 
@@ -47,8 +51,15 @@ public class LoginController extends HttpServlet {
 
 		try {
 
+			dao = UsuarioDAO.getInstance();
+
 			String usuario = request.getParameter("usuario");
 			String password = request.getParameter("password");
+
+			ArrayList<Usuario> usuarios = new ArrayList<Usuario>();
+			usuarios = dao.getAll();
+
+			request.setAttribute("materiales", materiales);
 
 			if (USER.equalsIgnoreCase(usuario) && PASS.equals(password)) {
 

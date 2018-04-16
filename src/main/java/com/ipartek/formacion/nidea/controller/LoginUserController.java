@@ -41,14 +41,18 @@ public class LoginUserController extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
+		final String password = "123456";
+		final int id_rol = 2;
 		// recogemos parametros del jsp
 		String nombre = request.getParameter("usuario");
 		int id = Integer.parseInt(request.getParameter("id"));
 		HttpSession session = request.getSession();
 		session.setMaxInactiveInterval(15);
 		Usuario user = new Usuario();
-		user.setUser(nombre);
+		user.setNombre(nombre);
+		user.setPassword(password);
 		user.setId(id);
+		user.setId_rol(id_rol);
 		session.setAttribute("uPublic", user);
 
 		/*

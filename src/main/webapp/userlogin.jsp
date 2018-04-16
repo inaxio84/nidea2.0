@@ -11,7 +11,7 @@
                name="id" 
                class="form-control" 
                placeholder="id" required>
-        <label for="id">id</label>
+        <label for="id">Id</label>
       </div>
        
 

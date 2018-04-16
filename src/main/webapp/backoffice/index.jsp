@@ -31,7 +31,7 @@
 		<c:forEach var="usuario" items="${applicationScope.usuarios_conectados}">
 			<tr>
 				<td>${usuario.key}</td>
-				<td>${usuario.value.getUser()}</td>
+				<td>${usuario.value.getNombre()}</td>
 			</tr>
 		</c:forEach>
 		</tbody>
